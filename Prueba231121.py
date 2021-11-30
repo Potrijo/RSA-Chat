@@ -1,6 +1,8 @@
 from Crypto.Cipher import PKCS1_OAEP, PKCS1_v1_5
 from Crypto.PublicKey import RSA
 from random import *
+import binascii
+
 def createPublicKey():
     keyP = RSA.generate(2048)
     with open('myPublickey.pem','wb') as fPublic:
@@ -36,15 +38,11 @@ def DecodeMessage():
     with open('encodedMessage.pem', 'rb') as codedFile:
         encodedMessage = codedFile.read()
         print("\nQuevoyyyyy\n"+str(encodedMessage))
-    key = RSA.importKey(open('myPrivatekey.pem').read())
-    cipher = PKCS1_v1_5.new(key)
-    ciphertext = EncodeMessage()
-    sentinel = Random.new().read(256)   
-    print("\Cifraclub\n"+str(ciphertext))
-    decodedMessage = cipher.decrypt(ciphertext, sentinel)
-    
-
-    
+    rsa_key = RSA.importKey(open('myPrivatekey.pem').read())
+    privKeyPEM = rsa_key.exportKey()
+    print(privKeyPEM.decode('ascii'))
+    cipher = PKCS1_OAEP.new(privKeyPEM.decode('ascii'))
+    print(str(cipher.decrypt(encodedMessage)))
 
     
 EncodeMessage()
